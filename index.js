@@ -31,9 +31,9 @@ wss.on("connection", function (ws) {
   
   var addr = { host: "208.65.90.21", port: 4145 };
 
-  client.connect(addr.port, addr.host);
   client.on("connect", function () {
     console.log("client:connect: " + addr.host);
+    ws.send("connected to " + addr.host);
   });
 
   client.on("error", function (ex) {
@@ -57,7 +57,11 @@ wss.on("connection", function (ws) {
 
   ws.on("message", function incoming(message, isBinary) {
     if (isBinary == true){
-       client.write(message);
+      client.write(message);
+    }
+    if (isBinary == false){
+      addr = JSON.parse(message);
+      client.connect(addr.port, addr.host);
     }
   });
 
